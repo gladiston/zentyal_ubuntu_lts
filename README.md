@@ -89,7 +89,7 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
    - Configure as opções:
      - **IP Address**: `192.168.1.3`
      - **Netmask**: `255.255.255.0`
-     - **Gateway**: `192.168.1.1` (ou o gateway da sua rede).
+     - **Gateway**: `192.168.1.254` (ou o gateway da sua rede).
    - Clique em `Save` para aplicar as alterações.
 
 2. **Alterar o hostname**:
@@ -111,7 +111,7 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
 
    - No terminal do Zentyal, execute:
      ```bash
-     ping -c 4 192.168.1.1
+     ping -c 4 192.168.1.254
      nslookup dc1.acme.lan
      ```
 
@@ -121,75 +121,404 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
 
 ## Ativando o Servidor de Domínio
 
-1. **Acesse a interface de administração do Zentyal**:
-   - Navegue para `https://192.168.1.3:8443/` e autentique-se.
+### Introdução
 
-2. **Ative os módulos necessários**:
-   - Acesse `Software -> Zentyal Components` e selecione:
-     - `Domain Controller and File Sharing`.
-     - `DNS Service`.
-   - Clique em `Save Changes` para aplicar.
+Ativar o servidor de domínio é uma das etapas mais importantes ao configurar o Zentyal. Ele permite centralizar a administração de usuários, computadores e políticas de segurança dentro de uma rede, aumentando a produtividade e facilitando a gestão. Um controlador de domínio bem configurado também reduz problemas comuns de configuração manual e melhora a segurança geral da infraestrutura.
+
+### Passo a Passo
+
+1. **Acesse a interface de administração do Zentyal**:
+   - Abra um navegador e acesse `https://<endereco-ip-zentyal>:8443/`.
+   - Autentique-se com as credenciais do usuário administrador criado na instalação.
+
+2. **Habilite os módulos necessários**:
+   - Navegue até `Software > Zentyal Components`.
+   - Marque as opções:
+     - `Domain Controller and File Sharing`
+     - `DNS Service`
+   - Clique em **Save Changes** para aplicar.
 
 3. **Configure o domínio**:
-   - Vá para `Domain -> General Settings` e configure:
-     - **Domain Name**: `acme.lan`.
-     - **NetBIOS Name**: `ACME`.
-   - Clique em `Save`.
+   - Acesse `Domain > General Settings`.
+   - Preencha os seguintes campos:
+     - **Domain Name**: `acme.lan`
+     - **NetBIOS Name**: `ACME`
+   - Clique em **Save** para confirmar as alterações.
 
-4. **Crie um usuário administrador**:
-   - Em `Users and Computers -> Manage`, clique em `Add User`.
-   - Insira os detalhes do usuário, marcando `Administrator`.
+4. **Crie um usuário administrador do domínio**:
+   - Acesse `Users and Computers > Manage`.
+   - Clique em **Add User**.
+   - Preencha os detalhes do usuário e marque a opção `Administrator`.
+   - Clique em **Save**.
+
+5. **Teste a configuração**:
+   - No terminal do servidor ou em um cliente na rede, execute:
+     ```bash
+     ping -c 4 <endereco-ip-zentyal>
+     nslookup acme.lan <endereco-ip-zentyal>
+     ```
+   - Em um cliente Linux, teste com:
+     ```bash
+     ping -c 4 <endereco-ip-zentyal>
+     dig @<endereco-ip-zentyal> acme.lan
+     ```
+   - Verifique se o `ping`, `nslookup` e `dig` retornam resultados corretos.
+
+### Configurações adicionais
+
+- **Gerencie políticas de grupo (GPOs)**:
+  - Utilize o RSAT (Remote Server Administration Tools) do Windows para criar e aplicar GPOs.
+  - Certifique-se de que os computadores no domínio utilizam o servidor Zentyal como DNS primário.
+
+- **Adicione computadores ao domínio**:
+  - No cliente Windows, abra `Configurações do Sistema` > `Nome do Computador` > `Alterar`.
+  - Insira o nome do domínio (`acme.lan`) e as credenciais do administrador.
+  - Reinicie o computador após a adesão.
+
+Seguindo essas etapas, seu servidor de domínio estará configurado e pronto para uso.
+
 
 ---
 
 ## Integrando o Squid com o Samba
 
-### Configurando Autenticação no Proxy
+A integração do Squid com o Samba permite autenticar usuários do domínio diretamente no proxy, utilizando as credenciais configuradas no Zentyal. A maior parte da configuração pode ser feita pela interface gráfica do Zentyal, mas algumas etapas avançadas requerem o uso do terminal.
 
-1. Acesse `HTTP Proxy -> General Settings` e ative `Enable authentication`.
+### Configurando Autenticação no Proxy via Zentyal
 
-2. Configure o campo `Domain Controller` com:
-   - **Domain Name**: `acme.lan`.
-   - **Controller IP**: `192.168.1.3`.
+1. **Ative a autenticação no Squid**:
+   - Acesse `HTTP Proxy -> General Settings`.
+   - Marque a opção `Enable authentication`.
 
-3. Adicione regras em `HTTP Proxy -> Filter Profiles`.
+2. **Configure o domínio para autenticação**:
+   - No mesmo menu, insira os seguintes valores no campo `Domain Controller`:
+     - **Domain Name**: `acme.lan`.
+     - **Controller IP**: `192.168.1.3` (ou o IP do servidor Zentyal).
+
+3. **Configure perfis de filtro**:
+   - Vá para `HTTP Proxy -> Filter Profiles`.
+   - Crie regras específicas para grupos de usuários:
+     - Escolha o grupo correspondente configurado no Samba.
+     - Adicione palavras-chave ou categorias que devem ser bloqueadas.
+
+---
+
+## Adicionando Grupos e Usuários no Zentyal
+
+### Introdução
+Gerenciar grupos e usuários é essencial em qualquer ambiente corporativo. No Zentyal, essa tarefa é simplificada através da interface gráfica, permitindo que você organize o acesso a recursos, atribua permissões e mantenha a segurança da sua rede de forma centralizada. Isso também facilita a administração de equipes e departamentos, garantindo que apenas os usuários autorizados tenham acesso às informações necessárias.
+
+A seguir, apresentamos um passo a passo para criar os usuários "administrador", "joão" e "silva" e os grupos "orcamentos", "projetos" e "financeiro" utilizando a interface gráfica do Zentyal.
+
+---
+
+### Passo a Passo para Adicionar Grupos
+
+1. **Acesse a interface web do Zentyal:**
+   - Abra um navegador e acesse `https://<endereco-ip-zentyal>:8443`.
+   - Insira as credenciais de administrador para fazer login.
+
+2. **Navegue para a seção de grupos:**
+   - No menu lateral, clique em `Users and Computers` e, em seguida, em `Groups`.
+
+3. **Crie os grupos desejados:**
+   - Clique no botão `Add Group`.
+   - Preencha os seguintes detalhes:
+     - **Group Name:** `orcamentos`
+     - Clique em `Add`.
+   - Repita o processo para os grupos `projetos` e `financeiro`.
+
+4. **Salvar alterações:**
+   - Clique em `Save Changes` para aplicar as modificações.
+
+---
+
+### Passo a Passo para Adicionar Usuários
+
+1. **Navegue para a seção de usuários:**
+   - No menu lateral, clique em `Users and Computers` e, em seguida, em `Users`.
+
+2. **Adicione o usuário "administrador":**
+   - Clique no botão `Add User`.
+   - Preencha os seguintes detalhes:
+     - **Full Name:** Administrador
+     - **Username:** administrador
+     - **Password:** (insira uma senha segura)
+     - **Primary Group:** (mantenha o padrão)
+   - Clique em `Add`.
+
+3. **Adicione os usuários "joão" e "silva":**
+   - Para cada usuário, repita o processo acima com os seguintes detalhes:
+     - **Full Name:** João / Silva
+     - **Username:** joao / silva
+     - **Password:** (insira uma senha segura para cada um)
+     - **Primary Group:** (mantenha o padrão)
+   - Clique em `Add` para cada usuário criado.
+
+4. **Atribua os usuários aos grupos:**
+   - Para cada usuário, clique no nome dele na lista.
+   - Em `Group Membership`, selecione os grupos relevantes:
+     - Para "joão", selecione `orcamentos` e `projetos`.
+     - Para "silva", selecione `financeiro`.
+   - Clique em `Save` para salvar as alterações.
+
+---
+
+### Testando as Configurações
+
+1. **Verifique os grupos:**
+   - Navegue até `Users and Computers -> Groups`.
+   - Certifique-se de que os grupos `orcamentos`, `projetos` e `financeiro` contêm os usuários atribuídos corretamente.
+
+2. **Teste as permissões:**
+   - Autentique-se na rede usando os usuários criados.
+   - Verifique se cada usuário tem acesso apenas aos recursos configurados para os grupos aos quais pertence.
+
+Com essas etapas, você pode gerenciar eficientemente grupos e usuários no Zentyal, mantendo um ambiente organizado e seguro.
+
+---
+
+## Configurações Avançadas no Terminal
+
+### Introdução
+
+Apesar da interface gráfica do Zentyal simplificar grande parte da configuração, é fundamental dominar também o terminal para realizar ajustes específicos ou resolver problemas mais complexos. O uso combinado das duas abordagens garante uma gestão eficiente e permite personalizar detalhes que não estão acessíveis pela interface gráfica. Nesta seção, mostraremos como incluir um usuário para autenticação no proxy e configurar ACLs no Squid utilizando o terminal.
+
+### Configurando um Usuário para o Proxy
+
+1. **Criar o usuário `proxy_user`:**
+   - Na interface gráfica do Zentyal, acesse `Users and Computers > Users`.
+   - Clique em **Add User** e insira os seguintes dados:
+     - **Full Name**: Proxy User
+     - **Username**: proxy_user
+     - **Password**: senha123
+   - Clique em **Save** para salvar o novo usuário.
+
+2. **Verificar o usuário no terminal:**
+   - No terminal do servidor, execute o seguinte comando para listar os usuários do sistema:
+     ```bash
+     wbinfo -u
+     ```
+     Certifique-se de que `proxy_user` está listado.
+
+3. **Configurar o Squid para usar `proxy_user`:**
+   - Edite o arquivo de configuração do Squid:
+     ```bash
+     sudo nano /etc/squid/squid.conf
+     ```
+   - Altere ou adicione a seguinte configuração de autenticação:
+     ```bash
+     auth_param basic program /usr/lib/squid/basic_ldap_auth -R -b "dc=acme,dc=lan" -D "cn=proxy_user,dc=acme,dc=lan" -w senha123 -f sAMAccountName=%s -h 192.168.1.3
+     acl autenticados proxy_auth REQUIRED
+     http_access allow autenticados
+     ```
+     - Substitua `192.168.1.3` pelo IP do seu servidor Zentyal, se diferente.
+
+4. **Recarregar o Squid:**
+   - Aplique as alterações executando:
+     ```bash
+     sudo systemctl reload squid
+     ```
+
+5. **Testar a autenticação:**
+   - No terminal de um cliente, teste o acesso ao proxy:
+     ```bash
+     curl --proxy-user proxy_user:senha123 -x http://192.168.1.3:3128 http://www.google.com
+     ```
+     Certifique-se de substituir o IP e porta conforme sua configuração.
+
+6. **Monitorar os logs do Squid:**
+   - Verifique os registros de acesso e autenticação:
+     ```bash
+     tail -f /var/log/squid/access.log
+     ```
+
+Após estes passos, o usuário `proxy_user` estará configurado corretamente para autenticação no proxy. Isso garante maior segurança ao utilizar uma conta dedicada, ao invés do usuário administrador, e permite um controle mais preciso sobre os acessos ao sistema.
 
 ---
 
 ## Ativando e Conferindo a Presença do DNS Local
 
-1. Verifique se o DNS está ativo:
-   - Vá para `DNS -> General Settings` e ative o `Enable DNS Service`, se necessário.
+### Por que o DNS Local é importante?
 
-2. Teste o DNS local:
-   ```bash
-   nslookup dc1.acme.lan 192.168.1.3
+O DNS (Domain Name System) é essencial para o funcionamento de uma rede, pois traduz nomes de domínio amigáveis para endereços IP, facilitando a comunicação entre dispositivos. No contexto de servidores Zentyal, o DNS local garante que serviços, dispositivos e usuários na rede interna possam se comunicar de maneira eficiente, reduzindo atrasos e otimizando a resolução de nomes. Além disso, ele pode ser configurado para oferecer maior segurança e controle administrativo.
+
+### Ativando o Serviço DNS no Zentyal
+
+1. **Acesse a interface gráfica do Zentyal**:
+   - Utilize um navegador e acesse `https://<endereço-ip-zentyal>:8443`.
+
+2. **Ative o módulo de DNS**:
+   - Navegue para `Software -> Zentyal Components`.
+   - Marque a caixa `DNS Service`.
+   - Clique em `Save Changes`.
+
+3. **Configure o serviço DNS**:
+   - Acesse `DNS -> General Settings`.
+   - Certifique-se de que a opção `Enable DNS Service` está ativada.
+   - No campo **Domain Name**, insira o nome de domínio interno, por exemplo, `acme.lan`.
+   - Clique em `Save`.
+
+4. **Adicione registros DNS**:
+   - Vá para `DNS -> DNS Records`.
+   - Clique em `Add Record`.
+   - Insira os detalhes do registro, por exemplo:
+     - **Type**: `A`.
+     - **Name**: `dc1`.
+     - **IP Address**: `<endereço-ip-zentyal>`.
+   - Clique em `Save`.
+
+### Testando o Serviço DNS
+
+#### Em um computador com Windows:
+1. Abra o Prompt de Comando (`cmd`).
+2. Verifique a resolução de nomes com o comando:
+   ```cmd
+   nslookup dc1.acme.lan <endereço-ip-zentyal>
    ```
+3. Certifique-se de que o retorno contém o endereço correto.
 
+#### Em um computador com Linux:
+1. Abra o terminal.
+2. Execute o comando `dig` para verificar a resolução:
+   ```bash
+   dig @<endereço-ip-zentyal> dc1.acme.lan
+   ```
+3. Confirme se a resposta mostra o endereço IP correspondente.
+
+Com essas configurações, o serviço DNS local estará funcional e pronto para uso na sua rede.
+    
 ---
 
 ## Ativando Autoconfiguração de Proxy
 
-1. Habilite o WPAD em `HTTP Proxy -> General Settings`.
-2. Adicione um registro `CNAME` para `wpad` em `DNS -> DNS Records`.
+### O que é WPAD?
+
+O WPAD (Web Proxy Auto-Discovery Protocol) é um protocolo que permite que dispositivos em uma rede detectem automaticamente as configurações de proxy. Isso elimina a necessidade de configurar manualmente os navegadores ou sistemas operacionais, simplificando o gerenciamento e reduzindo erros em redes corporativas.
+
+### Benefícios de ativar o WPAD
+
+- **Redução de erros**: Configurações manuais podem ser propensas a erros.
+- **Gerenciamento centralizado**: Alterações no proxy são aplicadas automaticamente a todos os dispositivos na rede.
+- **Melhoria na segurança**: Permite maior controle sobre o tráfego de rede.
+
+### Passos para habilitar o WPAD no Zentyal
+
+1. **Habilitar WPAD no Proxy HTTP**
+   - Acesse `HTTP Proxy -> General Settings` na interface do Zentyal.
+   - Marque a opção `Enable WPAD`.
+   - Salve as alterações clicando em `Save`.
+
+2. **Criar um registro DNS para o WPAD**
+   - Vá para `DNS -> DNS Records`.
+   - Clique em `Add Record`.
+   - Preencha os campos da seguinte forma:
+     - **Type**: `CNAME`.
+     - **Name**: `wpad`.
+     - **Target**: O hostname do servidor Zentyal (ex.: `dc1.acme.lan`).
+   - Clique em `Save`.
+
+3. **Configurar o arquivo wpad.dat**
+   - Crie o arquivo `wpad.dat` no servidor Zentyal contendo as configurações de proxy:
+     ```plaintext
+     function FindProxyForURL(url, host) {
+         if (isInNet(host, "192.168.1.0", "255.255.255.0")) {
+             return "PROXY 192.168.1.3:3128";
+         } else {
+             return "DIRECT";
+         }
+     }
+     ```
+   - Salve o arquivo no diretório `/var/www/html/`.
+
+4. **Configurar o servidor web**
+   - Certifique-se de que o servidor web no Zentyal está configurado para servir o arquivo `wpad.dat`:
+     - No terminal, execute:
+       ```bash
+       sudo systemctl enable apache2
+       sudo systemctl start apache2
+       ```
+
+5. **Testar o WPAD**
+   - Em um navegador de um cliente na rede, habilite a configuração automática de proxy e reinicie o navegador.
+   - Acesse um site para verificar se o proxy está sendo utilizado. Verifique os logs do Squid para confirmar.
+
+6. **Depuração**
+   - Para monitorar possíveis problemas, verifique os logs do servidor web:
+     ```bash
+     sudo tail -f /var/log/apache2/access.log
+     sudo tail -f /var/log/apache2/error.log
+     ```
+Com essas etapas, o WPAD estará ativado e funcional em sua rede, facilitando a configuração do proxy para todos os dispositivos.
+
 
 ---
 
-## Habilitando Suporte Remoto via SSH
+# Habilitando Suporte Remoto via SSH
 
-1. **Instale e ative o SSH**:
-   ```bash
-   sudo apt install openssh-server
-   sudo systemctl start ssh
-   sudo systemctl enable ssh
-   ```
+## Por que ativar o SSH?
+O SSH (Secure Shell) é essencial para a administração remota de servidores. Ele permite gerenciar o sistema com segurança, realizar manutenção, aplicar configurações e solucionar problemas sem a necessidade de acesso físico ao servidor. No caso do Zentyal, o suporte remoto é especialmente útil para administrar serviços e realizar diagnósticos.
 
-2. **Habilite o acesso root**, se necessário:
+---
+
+## Etapas para Configuração
+
+### 1. Ativando o SSH no Zentyal
+1. Acesse a interface gráfica do Zentyal.
+2. Navegue até `System -> Services`.
+3. Localize o serviço **SSH** na lista.
+4. Habilite o serviço marcando a caixa correspondente e clique em `Save Changes`.
+
+---
+
+### 2. Configurando o Firewall para Permitir Conexões SSH
+1. Vá para `Firewall -> Packet Filter Rules`.
+2. No perfil **External Networks to Zentyal**, clique em `Add Rule`.
+3. Configure a regra:
+   - **Decision**: Accept.
+   - **Source**: Any.
+   - **Destination Service**: SSH.
+4. Clique em `Add` e, em seguida, `Save Changes` para aplicar as configurações.
+
+---
+
+### 3. Habilitando o Acesso do Usuário "root"
+Por padrão, o acesso remoto via SSH como "root" está desabilitado por questões de segurança. Se necessário:
+
+#### **Ativar a senha do root**:
+1. No terminal do servidor Zentyal, execute:
    ```bash
    sudo passwd root
    ```
+2. Insira e confirme a nova senha para o usuário "root".
 
-3. **Permita conexões SSH no Firewall**.
+#### **Permitir login root no SSH**:
+1. Edite o arquivo de configuração do SSH:
+   ```bash
+   sudo nano /etc/ssh/sshd_config
+   ```
+2. Localize a linha:
+   ```
+   PermitRootLogin prohibit-password
+   ```
+3. Substitua por:
+   ```
+   PermitRootLogin yes
+   ```
+4. Salve as alterações e reinicie o serviço SSH:
+   ```bash
+   sudo systemctl restart ssh
+   ```
+
+---
+
+### 4. Testando o Acesso SSH
+1. Em outro computador, use um cliente SSH para testar a conexão com o IP `192.168.1.3`:
+   ```bash
+   ssh root@192.168.1.3
+   ```
+2. Certifique-se de que a conexão é estabelecida com sucesso e que as credenciais do usuário "root" funcionam.
+
 
 ---
 

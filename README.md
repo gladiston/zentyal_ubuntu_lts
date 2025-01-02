@@ -119,113 +119,80 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
 
 ---
 
-## Habilitando Suporte Remoto via SSH
+## Ativando o Servidor de Domínio
 
-### Instalando e Ativando o SSH no Zentyal
+1. **Acesse a interface de administração do Zentyal**:
+   - Navegue para `https://192.168.1.3:8443/` e autentique-se.
 
-1. **Verifique se o SSH está instalado**:
+2. **Ative os módulos necessários**:
+   - Acesse `Software -> Zentyal Components` e selecione:
+     - `Domain Controller and File Sharing`.
+     - `DNS Service`.
+   - Clique em `Save Changes` para aplicar.
 
-   No terminal do Zentyal, execute:
+3. **Configure o domínio**:
+   - Vá para `Domain -> General Settings` e configure:
+     - **Domain Name**: `acme.lan`.
+     - **NetBIOS Name**: `ACME`.
+   - Clique em `Save`.
 
+4. **Crie um usuário administrador**:
+   - Em `Users and Computers -> Manage`, clique em `Add User`.
+   - Insira os detalhes do usuário, marcando `Administrator`.
+
+---
+
+## Integrando o Squid com o Samba
+
+### Configurando Autenticação no Proxy
+
+1. Acesse `HTTP Proxy -> General Settings` e ative `Enable authentication`.
+
+2. Configure o campo `Domain Controller` com:
+   - **Domain Name**: `acme.lan`.
+   - **Controller IP**: `192.168.1.3`.
+
+3. Adicione regras em `HTTP Proxy -> Filter Profiles`.
+
+---
+
+## Ativando e Conferindo a Presença do DNS Local
+
+1. Verifique se o DNS está ativo:
+   - Vá para `DNS -> General Settings` e ative o `Enable DNS Service`, se necessário.
+
+2. Teste o DNS local:
    ```bash
-   dpkg -l | grep openssh-server
+   nslookup dc1.acme.lan 192.168.1.3
    ```
 
-   - Se não estiver instalado, instale o SSH com o comando:
+---
 
-     ```bash
-     sudo apt install openssh-server
-     ```
+## Ativando Autoconfiguração de Proxy
 
-2. **Inicie e habilite o serviço SSH**:
+1. Habilite o WPAD em `HTTP Proxy -> General Settings`.
+2. Adicione um registro `CNAME` para `wpad` em `DNS -> DNS Records`.
 
-   Execute os seguintes comandos para iniciar o serviço e habilitá-lo na inicialização:
+---
 
+## Habilitando Suporte Remoto via SSH
+
+1. **Instale e ative o SSH**:
    ```bash
+   sudo apt install openssh-server
    sudo systemctl start ssh
    sudo systemctl enable ssh
    ```
 
-3. **Permita conexões SSH no Firewall**:
-
-   - Acesse `Firewall -> Packet Filter` na interface do Zentyal.
-   - Em `Filtering rules for internal networks`, adicione uma nova regra para permitir conexões na porta 22 (SSH).
-   - Clique em `Save` para aplicar as configurações.
-
-### Habilitando o Usuário "root" para Acesso SSH
-
-1. **Desbloqueie o usuário root**:
-
-   No terminal do Zentyal, defina uma senha para o usuário root com o comando:
-
+2. **Habilite o acesso root**, se necessário:
    ```bash
    sudo passwd root
    ```
 
-   Escolha uma senha forte e confirme.
-
-2. **Permita login como root no SSH**:
-
-   Edite o arquivo de configuração do SSH:
-
-   ```bash
-   sudo nano /etc/ssh/sshd_config
-   ```
-
-   Localize a linha:
-
-   ```
-   PermitRootLogin prohibit-password
-   ```
-
-   Substitua por:
-
-   ```
-   PermitRootLogin yes
-   ```
-
-   Salve o arquivo e reinicie o serviço SSH:
-
-   ```bash
-   sudo systemctl restart ssh
-   ```
-
-### Testando o Acesso Remoto
-
-1. **De uma estação cliente Linux**:
-
-   Use o comando abaixo para conectar ao servidor Zentyal:
-
-   ```bash
-   ssh administrador@192.168.1.3
-   ```
-
-   Substitua `administrador` pelo usuário administrador configurado anteriormente.
-
-2. **De uma estação cliente Windows**:
-
-   - Use um cliente SSH como o [PuTTY](https://www.putty.org/).
-   - Configure o endereço IP como `192.168.1.3` e a porta como `22`.
-   - Conecte-se usando as credenciais do administrador.
-
-3. **Teste com o usuário root (opcional)**:
-
-   Caso precise acessar como root, utilize o mesmo procedimento acima, substituindo `administrador` por `root` e utilizando a senha definida anteriormente.
-
----
-
-## Dicas e Solução de Problemas
-
-- **Ambiente gráfico não inicia**: Utilize os atalhos `CTRL + ALT + F7` ou `CTRL + ALT + F5` para alternar entre as telas virtuais.
-
-- **Configuração de rede ausente**: Reconfigure manualmente usando o comando `ip` para acessar novamente o assistente.
-
-- **Edição do Zentyal**: Após a configuração inicial, ative uma edição Comercial ou Trial acessando `Sistema -> Edição do Servidor` na interface web.
+3. **Permita conexões SSH no Firewall**.
 
 ---
 
 ## Conclusão
 
-Com este guia, você aprendeu a instalar e configurar o Zentyal 8.0 em um servidor Ubuntu 22.04 LTS. Caso necessite de suporte adicional, consulte a [documentação oficial do Zentyal](https://doc.zentyal.org/en/installation.html).
-
-Boa sorte com sua nova instalação!
+Com este guia, você configurou o Zentyal 8.0 no Ubuntu 22.04 LTS. Aproveite!

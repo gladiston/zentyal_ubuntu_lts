@@ -1,215 +1,231 @@
 
-# Manual de Instalação do Zentyal 8.0
+# Manual de Instalação e Configuração do Zentyal 8.0 no Ubuntu 22.04 LTS
+
+**Autor**: Gladiston Santana<br>
+**Data**: 02 de janeiro de 2025<br>
+**Contato**: gladiston.santana [em] gmail [ponto] com
+
+---
 
 ## Introdução
-Este manual tem como objetivo orientar o processo de instalação do Zentyal 8.0 sobre o Ubuntu 22.04 LTS, seja em sua versão Server ou Desktop. 
-O guia apresenta os passos necessários para configurar e acessar a interface de administração do Zentyal, garantindo uma instalação bem-sucedida 
-e com considerações importantes para o uso posterior.
 
-**Autor:** Gladiston Santana  
-**Data:** 02/01/2025  
-**Contato:** gladiston.santana[at]gmail.com  
+Este documento tem como objetivo fornecer um guia prático para instalação e configuração do Zentyal 8.0 em sistemas baseados no Ubuntu 22.04 LTS, tanto nas versões Server quanto Desktop. O Zentyal é uma ferramenta poderosa para gerenciar servidores, oferecendo funcionalidades como controlador de domínio, servidor de arquivos e impressão, gateway de rede e muito mais.
 
-## 1. Baixar o script de instalação
-Abra o terminal e execute:
+Seguindo este guia, você poderá instalar e configurar o Zentyal de forma rápida e eficiente, garantindo um ambiente funcional e seguro para suas necessidades.
+
+---
+
+## Requisitos Pré-Instalação
+
+Antes de iniciar, certifique-se de que seu sistema atende aos seguintes requisitos:
+
+- Ubuntu 22.04 LTS (Server ou Desktop) instalado e atualizado.
+- Acesso à Internet.
+- Privilegios de administrador no sistema.
+
+---
+
+## Etapas de Instalação
+
+### 1. Baixe o script de instalação
 
 ```bash
 wget https://raw.githubusercontent.com/zentyal/zentyal/master/extra/ubuntu_installers/zentyal_installer_8.0.sh
 ```
 
-## 2. Conceder permissão de execução ao script
+### 2. Conceda permissão de execução ao script
+
 ```bash
 sudo chmod u+x zentyal_installer_8.0.sh
 ```
 
-## 3. Executar o script de instalação
+### 3. Execute o script
+
 ```bash
 sudo ./zentyal_installer_8.0.sh
 ```
 
-## 4. Escolher a instalação do ambiente gráfico
-Durante a execução, o script perguntará se você deseja instalar o ambiente gráfico do Zentyal.  
-Digite 'y' para instalar ou 'n' para não instalar:
+Durante a execução, o script perguntará se você deseja instalar o ambiente gráfico do Zentyal. Digite `y` para instalar ou `n` para não instalar:
 
-```bash
+```
 Do you want to install the Zentyal Graphical environment? (n|y) y
 ```
 
-## 5. Acessar a interface web de administração do Zentyal
-Após a conclusão da instalação, será exibida a URL para acessar a interface web de administração:
+### 4. Acesse a interface web de administração
+
+Após a conclusão da instalação, será exibida a URL para acessar a interface web de administração do Zentyal:
 
 ```
 Installation complete, you can access the Zentyal Web Interface at:
 * https://<zentyal-ip-address>:8443/
 ```
 
-Substitua `<zentyal-ip-address>` pelo endereço IP do seu servidor Zentyal.  
-No navegador, acesse a URL fornecida e faça login com o usuário do sistema Ubuntu.  
-Após o login, o assistente de configuração será iniciado.
+Substitua `<zentyal-ip-address>` pelo endereço IP do seu servidor Zentyal.
 
-## 6. Considerações adicionais
-- **Edição do Zentyal:** A instalação via script configura a Edição de Desenvolvimento. Após a configuração inicial, você pode ativar uma Edição Trial ou Comercial acessando 'Sistema -> Edição do Servidor' e inserindo sua Chave de Licença.
-- **Configuração de Rede:** É importante configurar o módulo de rede através do assistente de configuração antes de reiniciar o servidor para evitar perda de configuração de rede.
-- **Ambiente Gráfico:** Se o ambiente gráfico não iniciar após o reinício, utilize os atalhos de teclado `CTRL + ALT + F7` ou `CTRL + ALT + F5` para acessá-lo.
+### 5. Autentique-se na interface web
 
-Para mais detalhes, consulte a documentação oficial do Zentyal: [https://doc.zentyal.org/en/installation.html](https://doc.zentyal.org/en/installation.html)
+Na tela de login, utilize as credenciais do usuário do sistema Ubuntu para autenticar-se.
 
+---
 
-## 7. Configuração do Squid como Proxy Transparente
+## Configuração Inicial
 
-### 7.1 Ativação do Squid
-1. Instale o Squid usando o seguinte comando:
+### Assistente de Configuração
+
+Após o login, o assistente de configuração será iniciado. Ele permite:
+
+- Selecionar pacotes a serem instalados (ex.: Servidor DNS, LDAP, Gateway).
+- Configurar as interfaces de rede.
+- Ajustar outras definições iniciais do sistema.
+
+**Atenção**: Se o assistente não for concluído, a configuração de rede pode ser perdida após reinícios. Certifique-se de concluir todas as etapas.
+
+### Configurando Rede e Hostname
+
+1. **Configurar o endereço IP fixo**:
+
+   - Acesse `Network -> Interfaces` na interface do Zentyal.
+   - Localize a interface de rede conectada e clique em `Edit`.
+   - Configure as opções:
+     - **IP Address**: `192.168.1.3`
+     - **Netmask**: `255.255.255.0`
+     - **Gateway**: `192.168.1.1` (ou o gateway da sua rede).
+   - Clique em `Save` para aplicar as alterações.
+
+2. **Alterar o hostname**:
+
+   - Acesse `System -> General Settings`.
+   - No campo **Hostname**, insira `dc1`.
+   - Clique em `Change` para salvar.
+
+3. **Configurar os nameservers**:
+
+   - Vá para `Network -> DNS`.
+   - Insira os servidores DNS desejados. Por exemplo:
+     - **Primary DNS**: `192.168.1.3` (o próprio servidor Zentyal).
+     - **Secondary DNS**: `8.8.8.8` (ou o DNS de sua escolha).
+   - No campo **Search Domain**, insira `acme.lan`.
+   - Clique em `Save`.
+
+4. **Teste as configurações**:
+
+   - No terminal do Zentyal, execute:
+     ```bash
+     ping -c 4 192.168.1.1
+     nslookup dc1.acme.lan
+     ```
+
+   - Certifique-se de que o ping retorna pacotes corretamente e o `nslookup` resolve o hostname do servidor.
+
+---
+
+## Habilitando Suporte Remoto via SSH
+
+### Instalando e Ativando o SSH no Zentyal
+
+1. **Verifique se o SSH está instalado**:
+
+   No terminal do Zentyal, execute:
+
    ```bash
-   sudo apt install squid
+   dpkg -l | grep openssh-server
    ```
 
-2. Configure o Squid para funcionar como proxy transparente. Edite o arquivo de configuração:
+   - Se não estiver instalado, instale o SSH com o comando:
+
+     ```bash
+     sudo apt install openssh-server
+     ```
+
+2. **Inicie e habilite o serviço SSH**:
+
+   Execute os seguintes comandos para iniciar o serviço e habilitá-lo na inicialização:
+
    ```bash
-   sudo nano /etc/squid/squid.conf
+   sudo systemctl start ssh
+   sudo systemctl enable ssh
    ```
 
-3. Adicione ou altere as seguintes linhas no arquivo `squid.conf`:
-   ```
-   http_port 3128 intercept
-   acl localnet src 192.168.0.0/24  # Substitua pelo IP da sua rede local
-   http_access allow localnet
-   http_access deny all
-   ```
+3. **Permita conexões SSH no Firewall**:
 
-4. Salve e reinicie o Squid:
+   - Acesse `Firewall -> Packet Filter` na interface do Zentyal.
+   - Em `Filtering rules for internal networks`, adicione uma nova regra para permitir conexões na porta 22 (SSH).
+   - Clique em `Save` para aplicar as configurações.
+
+### Habilitando o Usuário "root" para Acesso SSH
+
+1. **Desbloqueie o usuário root**:
+
+   No terminal do Zentyal, defina uma senha para o usuário root com o comando:
+
    ```bash
-   sudo systemctl restart squid
+   sudo passwd root
    ```
 
-### 7.2 Configuração de Proxy Transparente com Autenticação
-1. Habilite a autenticação básica. Edite o arquivo `squid.conf` e adicione as seguintes linhas:
-   ```
-   auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd
-   auth_param basic realm Proxy Autenticado
-   acl authenticated proxy_auth REQUIRED
-   http_access allow authenticated
-   ```
+   Escolha uma senha forte e confirme.
 
-2. Crie um arquivo para armazenar as credenciais dos usuários:
+2. **Permita login como root no SSH**:
+
+   Edite o arquivo de configuração do SSH:
+
    ```bash
-   sudo touch /etc/squid/passwd
-   sudo chmod 600 /etc/squid/passwd
+   sudo nano /etc/ssh/sshd_config
    ```
 
-3. Adicione um usuário ao arquivo de autenticação:
+   Localize a linha:
+
+   ```
+   PermitRootLogin prohibit-password
+   ```
+
+   Substitua por:
+
+   ```
+   PermitRootLogin yes
+   ```
+
+   Salve o arquivo e reinicie o serviço SSH:
+
    ```bash
-   sudo htpasswd -c /etc/squid/passwd usuario1
+   sudo systemctl restart ssh
    ```
 
-### 7.3 Configuração do Firewall para Proxy Transparente
-1. Redirecione o tráfego HTTP e HTTPS para o proxy Squid. Adicione as seguintes regras de iptables:
+### Testando o Acesso Remoto
+
+1. **De uma estação cliente Linux**:
+
+   Use o comando abaixo para conectar ao servidor Zentyal:
+
    ```bash
-   sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3128
-   sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 3128
+   ssh administrador@192.168.1.3
    ```
 
-3. Salve as regras do firewall para que persistam após a reinicialização:
-   ```bash
-   sudo apt install iptables-persistent
-   sudo netfilter-persistent save
-   ```
+   Substitua `administrador` pelo usuário administrador configurado anteriormente.
 
-Agora o Squid está configurado como proxy transparente com autenticação nas portas 80 e 443. O firewall está configurado para permitir comunicação nas demais portas sem intervenção do proxy.
+2. **De uma estação cliente Windows**:
 
+   - Use um cliente SSH como o [PuTTY](https://www.putty.org/).
+   - Configure o endereço IP como `192.168.1.3` e a porta como `22`.
+   - Conecte-se usando as credenciais do administrador.
 
+3. **Teste com o usuário root (opcional)**:
 
-## 8. Liberação de Portas Específicas pelo Firewall
+   Caso precise acessar como root, utilize o mesmo procedimento acima, substituindo `administrador` por `root` e utilizando a senha definida anteriormente.
 
-### 8.1 Porta FTP (21)
-Para liberar o tráfego FTP, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 21 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 21 -j ACCEPT
-```
+---
 
-### 8.2 Porta SSH (22)
-Para liberar o tráfego SSH, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
-```
+## Dicas e Solução de Problemas
 
-### 8.3 Porta SMTP (25)
-Para liberar o tráfego SMTP, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 25 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 25 -j ACCEPT
-```
+- **Ambiente gráfico não inicia**: Utilize os atalhos `CTRL + ALT + F7` ou `CTRL + ALT + F5` para alternar entre as telas virtuais.
 
-### 8.4 Porta POP3 (110)
-Para liberar o tráfego POP3, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 110 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 110 -j ACCEPT
-```
+- **Configuração de rede ausente**: Reconfigure manualmente usando o comando `ip` para acessar novamente o assistente.
 
-### 8.5 Porta IMAP (143)
-Para liberar o tráfego IMAP, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 143 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 143 -j ACCEPT
-```
+- **Edição do Zentyal**: Após a configuração inicial, ative uma edição Comercial ou Trial acessando `Sistema -> Edição do Servidor` na interface web.
 
-### 8.6 Porta Remote Desktop Protocol (RDP) (3389)
-Para liberar o tráfego RDP, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 3389 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 3389 -j ACCEPT
-```
+---
 
-### 8.7 Outros Serviços Populares
-Para liberar outras portas de serviços populares, substitua `<PORTA>` pelo número da porta desejada:
-```bash
-sudo iptables -A INPUT -p tcp --dport <PORTA> -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport <PORTA> -j ACCEPT
-```
+## Conclusão
 
-Certifique-se de substituir `<PORTA>` pela porta apropriada ao serviço que deseja liberar.
+Com este guia, você aprendeu a instalar e configurar o Zentyal 8.0 em um servidor Ubuntu 22.04 LTS. Caso necessite de suporte adicional, consulte a [documentação oficial do Zentyal](https://doc.zentyal.org/en/installation.html).
 
-
-### 8.8 Porta Ted - Sefaz (8017)
-Para liberar o tráfego na porta 8017 para o Ted - Sefaz, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 8017 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 8017 -j ACCEPT
-```
-
-### 8.9 Porta CagedNet (2500)
-Para liberar o tráfego na porta 2500 para o CagedNet, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 2500 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 2500 -j ACCEPT
-```
-
-### 8.10 Porta Sefip-CNS (2631)
-Para liberar o tráfego na porta 2631 para o Sefip-CNS, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 2631 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 2631 -j ACCEPT
-sudo iptables -A INPUT -p udp --dport 2631 -j ACCEPT
-sudo iptables -A OUTPUT -p udp --sport 2631 -j ACCEPT
-```
-
-### 8.11 Porta ReceitaNet (3456)
-Para liberar o tráfego na porta 3456 para o ReceitaNet, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 3456 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 3456 -j ACCEPT
-sudo iptables -A INPUT -p udp --dport 3456 -j ACCEPT
-sudo iptables -A OUTPUT -p udp --sport 3456 -j ACCEPT
-```
-
-### 8.12 Portas CAT (5017 e 5022)
-Para liberar o tráfego nas portas 5017 e 5022 para o CAT, execute:
-```bash
-sudo iptables -A INPUT -p tcp --dport 5017 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 5017 -j ACCEPT
-sudo iptables -A INPUT -p tcp --dport 5022 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --sport 5022 -j ACCEPT
-```
-
+Boa sorte com sua nova instalação!

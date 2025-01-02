@@ -519,9 +519,143 @@ Por padrão, o acesso remoto via SSH como "root" está desabilitado por questõe
    ```
 2. Certifique-se de que a conexão é estabelecida com sucesso e que as credenciais do usuário "root" funcionam.
 
+---
+## Liberações Básicas do Firewall
+
+A interface gráfica do Zentyal permite configurar o firewall de forma intuitiva, garantindo que serviços essenciais sejam liberados sem comprometer a segurança da rede. Abaixo estão as etapas para liberar os serviços mencionados neste guia:
+
+### 1. Liberar Conexões SSH
+1. Acesse `Firewall -> Packet Filter Rules`.
+2. No perfil **External Networks to Zentyal**, clique em `Add Rule`.
+3. Configure a regra:
+   - **Decision**: Accept.
+   - **Source**: Any.
+   - **Destination Service**: SSH.
+4. Clique em `Add` e, em seguida, em `Save Changes`.
+
+### 2. Liberar Serviço HTTP/HTTPS (Interface Web)
+1. Acesse `Firewall -> Packet Filter Rules`.
+2. No perfil **External Networks to Zentyal**, clique em `Add Rule`.
+3. Configure as regras:
+   - Para HTTP:
+     - **Decision**: Accept.
+     - **Source**: Any.
+     - **Destination Service**: HTTP.
+   - Para HTTPS:
+     - **Decision**: Accept.
+     - **Source**: Any.
+     - **Destination Service**: HTTPS.
+4. Clique em `Add` para cada regra e, em seguida, em `Save Changes`.
+
+### 3. Liberar Serviços de Domínio e DNS
+1. Acesse `Firewall -> Packet Filter Rules`.
+2. No perfil **External Networks to Zentyal**, clique em `Add Rule`.
+3. Configure as regras:
+   - Para DNS:
+     - **Decision**: Accept.
+     - **Source**: Any.
+     - **Destination Service**: DNS.
+   - Para Controlador de Domínio (LDAP/SMB):
+     - **Decision**: Accept.
+     - **Source**: Any.
+     - **Destination Service**: LDAP.
+     - **Destination Service**: SMB.
+4. Clique em `Add` para cada regra e, em seguida, em `Save Changes`.
+
+### 4. Liberar WPAD (Proxy Automático)
+1. Acesse `Firewall -> Packet Filter Rules`.
+2. No perfil **External Networks to Zentyal**, clique em `Add Rule`.
+3. Configure a regra:
+   - **Decision**: Accept.
+   - **Source**: Any.
+   - **Destination Service**: HTTP.
+4. Clique em `Add` e, em seguida, em `Save Changes`.
+
+### Testando as Configurações
+Após configurar as regras, teste os serviços liberados para garantir que o firewall está permitindo as conexões necessárias. Utilize comandos como `ping`, `nslookup` e `curl` para verificar o acesso.
+
+Com essas configurações, o firewall do Zentyal estará devidamente configurado para permitir os serviços básicos essenciais mencionados no guia.
+
+
+## Usando o Zentyal como Gateway
+
+Quando o Zentyal é utilizado como gateway de rede, é essencial configurar corretamente o firewall para garantir que os serviços necessários para os usuários da rede estejam liberados. A interface gráfica do Zentyal facilita essa configuração, permitindo adicionar regras para liberar portas específicas de forma segura e eficiente.
+
+### Liberando Serviços Essenciais
+
+Para liberar os serviços essenciais no firewall do Zentyal, siga os passos abaixo:
+
+1. **Acesse a interface gráfica do Zentyal:**
+   - Utilize um navegador para acessar `https://<endereco-ip-zentyal>:8443` e faça login com as credenciais administrativas.
+
+2. **Navegue até as regras do firewall:**
+   - Vá para `Firewall -> Packet Filter Rules`.
+   - Escolha o perfil adequado, como **External Networks to Zentyal**.
+
+3. **Adicione as regras para os serviços:**
+   - Clique em `Add Rule` e configure as seguintes portas:
+
+| Porta | Serviço                                           | Protocolo |
+|-------|---------------------------------------------------|-----------|
+| 20    | Transferência de dados FTP                       | TCP       |
+| 21    | Controle de FTP                                  | TCP       |
+| 22    | Secure shell (SSH)                               | TCP       |
+| 25    | Simple mail transfer protocol (SMTP)            | TCP       |
+| 53    | Domain name system (DNS)                        | TCP/UDP   |
+| 80    | Hypertext transfer protocol (HTTP)              | TCP       |
+| 110   | Post office protocol v3 (POP3)                  | TCP       |
+| 113   | Serviço de autenticação/protocolo de identificação | TCP       |
+| 123   | Network time protocol (NTP)                     | UDP       |
+| 143   | Internet message access protocol (IMAP)         | TCP       |
+| 443   | Hypertext transfer protocol com SSL/TLS (HTTPS) | TCP       |
+| 465   | SMTP SSL                                        | TCP       |
+| 587   | Envio de mensagem de e-mail (SMTP)              | TCP       |
+| 993   | Internet message access protocol com SSL (IMAPS)| TCP       |
+| 995   | Post office protocol 3 com TLS/SSL (POP3S)      | TCP       |
+
+4. **Configure as regras:**
+   - Para cada serviço, selecione:
+     - **Decision**: Accept
+     - **Source**: Any
+     - **Destination Service**: Escolha o serviço na lista ou insira a porta manualmente.
+   - Clique em `Add` após cada regra.
+
+5. **Salve as alterações:**
+   - Após adicionar todas as regras, clique em `Save Changes` para aplicar as configurações.
+
+### Liberando Serviços do Governo
+
+Alguns serviços específicos utilizados por órgãos governamentais também precisam ser liberados no firewall. Para isso, siga os mesmos passos acima e adicione as seguintes portas:
+
+| Porta   | Serviço                   | Protocolo |
+|---------|---------------------------|-----------|
+| 8017    | Ted - Sefaz              | TCP       |
+| 2500    | CagedNet                 | TCP       |
+| 2631    | Sefip-CNS                | TCP/UDP   |
+| 3456    | ReceitaNet               | TCP/UDP   |
+| 5017    | CAT                      | TCP       |
+| 5022    | CAT                      | TCP       |
+
+Certifique-se de repetir os passos para cada porta e serviço acima, salvando as alterações ao final.
+
+### Testando as Configurações
+
+1. Utilize ferramentas como `ping`, `nslookup` ou `curl` em clientes da rede para testar o acesso aos serviços configurados.
+2. Verifique os logs do firewall no Zentyal para garantir que as conexões estão sendo tratadas conforme esperado.
+
+Com essas configurações, o Zentyal estará pronto para operar como um gateway eficiente e seguro para sua rede.
 
 ---
 
-## Conclusão
+# Conclusão
 
-Com este guia, você configurou o Zentyal 8.0 no Ubuntu 22.04 LTS. Aproveite!
+Neste guia, percorremos o processo de instalação, configuração e uso do Zentyal 8.0 no Ubuntu 22.04 LTS. Desde os requisitos iniciais até as configurações avançadas, abordamos os seguintes pontos principais:
+
+- Preparação do ambiente e instalação do Zentyal;
+- Configuração da interface web e módulos essenciais, como DNS e controlador de domínio;
+- Gerenciamento de usuários, grupos e permissões para um ambiente corporativo mais eficiente;
+- Integração de serviços, como proxy autenticado e configuração de firewall;
+- Utilização do terminal para ajustes e personalizações avançadas.
+
+Com o Zentyal devidamente configurado, você conta com uma solução robusta para gerenciar sua infraestrutura de rede, aumentar a segurança e centralizar a administração. Esperamos que este guia tenha sido útil e que você aproveite ao máximo as funcionalidades oferecidas por esta ferramenta poderosa.
+

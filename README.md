@@ -1,5 +1,5 @@
 
-# Manual de Instalação e Configuração do Zentyal 8.0 no Ubuntu 22.04 LTS
+# Manual de Instalação e Configuração do Zentyal 8.0 no Ubuntu 24.04 LTS
 
 **Autor**: Gladiston Santana<br>
 **Data**: 02 de janeiro de 2025<br>

@@ -128,7 +128,7 @@ Ativar o servidor de domínio é uma das etapas mais importantes ao configurar o
 ### Passo a Passo
 
 1. **Acesse a interface de administração do Zentyal**:
-   - Abra um navegador e acesse `https://<endereco-ip-zentyal>:8443/`.
+   - Abra um navegador e acesse `https://192.168.1.3:8443/`.
    - Autentique-se com as credenciais do usuário administrador criado na instalação.
 
 2. **Habilite os módulos necessários**:
@@ -154,13 +154,13 @@ Ativar o servidor de domínio é uma das etapas mais importantes ao configurar o
 5. **Teste a configuração**:
    - No terminal do servidor ou em um cliente na rede, execute:
      ```bash
-     ping -c 4 <endereco-ip-zentyal>
-     nslookup acme.lan <endereco-ip-zentyal>
+     ping -c 4 192.168.1.3
+     nslookup acme.lan 192.168.1.3
      ```
    - Em um cliente Linux, teste com:
      ```bash
-     ping -c 4 <endereco-ip-zentyal>
-     dig @<endereco-ip-zentyal> acme.lan
+     ping -c 4 192.168.1.3
+     dig @192.168.1.3 acme.lan
      ```
    - Verifique se o `ping`, `nslookup` e `dig` retornam resultados corretos.
 
@@ -215,7 +215,7 @@ A seguir, apresentamos um passo a passo para criar os usuários "administrador",
 ### Passo a Passo para Adicionar Grupos
 
 1. **Acesse a interface web do Zentyal:**
-   - Abra um navegador e acesse `https://<endereco-ip-zentyal>:8443`.
+   - Abra um navegador e acesse `https://192.168.1.3:8443`.
    - Insira as credenciais de administrador para fazer login.
 
 2. **Navegue para a seção de grupos:**
@@ -586,7 +586,7 @@ Quando o Zentyal é utilizado como gateway de rede, é essencial configurar corr
 Para liberar os serviços essenciais no firewall do Zentyal, siga os passos abaixo:
 
 1. **Acesse a interface gráfica do Zentyal:**
-   - Utilize um navegador para acessar `https://<endereco-ip-zentyal>:8443` e faça login com as credenciais administrativas.
+   - Utilize um navegador para acessar `https://192.168.1.3:8443` e faça login com as credenciais administrativas.
 
 2. **Navegue até as regras do firewall:**
    - Vá para `Firewall -> Packet Filter Rules`.

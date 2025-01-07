@@ -70,7 +70,7 @@ Após a conclusão da instalação, será exibida a URL para acessar a interface
 
 ```
 Installation complete, you can access the Zentyal Web Interface at:
-* https://<zentyal-ip-address>:8443/
+* https://192.168.1.3:8443/
 ```
 
 Substitua `<zentyal-ip-address>` pelo endereço IP do seu servidor Zentyal.

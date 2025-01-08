@@ -29,12 +29,14 @@ Antes de iniciar, certifique-se de que seu sistema atende aos seguintes requisit
 
 Antes de iniciar, saiba que neste HowTo usaremos os seguintes parametros:
 
+- Rede: `192.168.1.0/24`
 - IP do servidor Ubuntu 24.04 LTS com Zentyal: `192.168.1.3`
 - Mascara de rede: `255.255.255.0`
 - Nome do host (fqdn): `acme.lan`
 - Nome NETBIOS: `ACME`
 - Gateway: `192.168.1.254`
 - DNS: `192.168.1.3` (o mesmo servidor)
+Ao longo do artigo faça a suas adaptações para sua rede e servidor.
 
 ---
 

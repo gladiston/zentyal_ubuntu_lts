@@ -35,7 +35,7 @@ Antes de iniciar, saiba que neste HowTo usaremos os seguintes parametros:
 - Nome do host (fqdn): `acme.lan`
 - Nome NETBIOS: `ACME`
 - Gateway: `192.168.1.254`
-- DNS: `192.168.1.3` (o mesmo servidor)
+- DNS: `192.168.1.3` (o mesmo que o servidor)  
 Ao longo do artigo faça a suas adaptações para sua rede e servidor.
 
 ---

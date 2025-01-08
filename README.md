@@ -89,7 +89,7 @@ Na tela de login, utilize as credenciais do usuário do sistema Ubuntu para aute
 
 Após o login, o assistente de configuração será iniciado. Ele permite:
 
-- Selecionar pacotes a serem instalados (ex.: Servidor DNS, LDAP, Gateway).
+- Selecionar pacotes a serem instalados, por exemplo, para servidor de Dominio apenas os pacotes Rede, DNS e NTP são essenciais.
 - Configurar as interfaces de rede.
 - Ajustar outras definições iniciais do sistema.
 

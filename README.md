@@ -1,5 +1,5 @@
 
-# Manual de Instalação e Configuração do Zentyal 8.0 no Ubuntu 24.04 LTS
+# Manual de Instalação e Configuração do Zentyal 8.0 no Ubuntu 22.04 LTS
 
 **Autor**: Gladiston Santana<br>
 **Data**: 02 de janeiro de 2025<br>
@@ -9,7 +9,7 @@
 
 ## Introdução
 
-Este documento tem como objetivo fornecer um guia prático para instalação e configuração do Zentyal 8.0 em sistemas baseados no Ubuntu 24.04 LTS, tanto nas versões Server quanto Desktop. O Zentyal é uma ferramenta poderosa para gerenciar servidores, oferecendo funcionalidades como controlador de domínio, servidor de arquivos e impressão, gateway de rede e muito mais.
+Este documento tem como objetivo fornecer um guia prático para instalação e configuração do Zentyal 8.0 em sistemas baseados no Ubuntu 22.04 LTS, tanto nas versões Server quanto Desktop. O Zentyal é uma ferramenta poderosa para gerenciar servidores, oferecendo funcionalidades como controlador de domínio, servidor de arquivos e impressão, gateway de rede e muito mais.
 
 Seguindo este guia, você poderá instalar e configurar o Zentyal de forma rápida e eficiente, garantindo um ambiente funcional e seguro para suas necessidades.
 
@@ -19,7 +19,7 @@ Seguindo este guia, você poderá instalar e configurar o Zentyal de forma rápi
 
 Antes de iniciar, certifique-se de que seu sistema atende aos seguintes requisitos:
 
-- Ubuntu 24.04 LTS (Server ou Desktop) instalado e atualizado.
+- Ubuntu 22.04 LTS (Server ou Desktop) instalado e atualizado.
 - Acesso à Internet.
 - Privilegios de administrador no sistema.
 
@@ -30,7 +30,7 @@ Antes de iniciar, certifique-se de que seu sistema atende aos seguintes requisit
 Antes de iniciar, saiba que neste HowTo usaremos os seguintes parametros:
 
 - Rede: `192.168.1.0/24`
-- IP do servidor Ubuntu 24.04 LTS com Zentyal: `192.168.1.3`
+- IP do servidor Ubuntu 22.04 LTS com Zentyal: `192.168.1.3`
 - Mascara de rede: `255.255.255.0`
 - Nome do host (fqdn): `acme.lan`
 - Nome NETBIOS: `ACME`

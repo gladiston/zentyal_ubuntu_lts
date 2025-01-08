@@ -129,9 +129,11 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
      ping -c 4 192.168.1.254
      nslookup dc1.acme.lan
      ```
-
    - Certifique-se de que o ping retorna pacotes corretamente e o `nslookup` resolve o hostname do servidor.
-
+   - Uma resposta como esta abaixo significará que algo esta errado e terá de rever todo o processo:
+   ```bash
+   ** server can't find dc2.acme.lan: NXDOMAIN
+   ```
 ---
 
 ## Ativando o Servidor de Domínio

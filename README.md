@@ -30,12 +30,12 @@ Antes de iniciar, certifique-se de que seu sistema atende aos seguintes requisit
 Antes de iniciar, saiba que neste HowTo usaremos os seguintes parametros:
 
 - Rede: `192.168.1.0/24`
-- IP do servidor Ubuntu 22.04 LTS com Zentyal: `192.168.1.3`
+- IP do servidor Ubuntu 22.04 LTS com Zentyal: `192.168.1.5`
 - Mascara de rede: `255.255.255.0`
 - Nome do host (fqdn): `acme.lan`
 - Nome NETBIOS: `ACME`
 - Gateway: `192.168.1.254`
-- DNS: `192.168.1.3` (o mesmo que o servidor)  
+- DNS: `192.168.1.5` (o mesmo que o servidor)  
 Ao longo do artigo faça a suas adaptações para sua rede e servidor.
 
 ---
@@ -72,7 +72,7 @@ Após a conclusão da instalação, será exibida a URL para acessar a interface
 
 ```
 Installation complete, you can access the Zentyal Web Interface at:
-* https://192.168.1.3:8443/
+* https://192.168.1.5:8443/
 ```
 
 Substitua `<zentyal-ip-address>` pelo endereço IP do seu servidor Zentyal.
@@ -102,7 +102,7 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
    - Acesse `Network -> Interfaces` na interface do Zentyal.
    - Localize a interface de rede conectada e clique em `Edit`.
    - Configure as opções:
-     - **IP Address**: `192.168.1.3`
+     - **IP Address**: `192.168.1.5`
      - **Netmask**: `255.255.255.0`
      - **Gateway**: `192.168.1.254` (ou o gateway da sua rede).
    - Clique em `Save` para aplicar as alterações.
@@ -117,7 +117,7 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
 
    - Vá para `Network -> DNS`.
    - Insira os servidores DNS desejados. Por exemplo:
-     - **Primary DNS**: `192.168.1.3` (o próprio servidor Zentyal).
+     - **Primary DNS**: `192.168.1.5` (o próprio servidor Zentyal).
      - **Secondary DNS**: `8.8.8.8` (ou o DNS de sua escolha).
    - No campo **Search Domain**, insira `acme.lan`.
    - Clique em `Save`.
@@ -143,7 +143,7 @@ Ativar o servidor de domínio é uma das etapas mais importantes ao configurar o
 ### Passo a Passo
 
 1. **Acesse a interface de administração do Zentyal**:
-   - Abra um navegador e acesse `https://192.168.1.3:8443/`.
+   - Abra um navegador e acesse `https://192.168.1.5:8443/`.
    - Autentique-se com as credenciais do usuário administrador criado na instalação.
 
 2. **Habilite os módulos necessários**:
@@ -169,13 +169,13 @@ Ativar o servidor de domínio é uma das etapas mais importantes ao configurar o
 5. **Teste a configuração**:
    - No terminal do servidor ou em um cliente na rede, execute:
      ```bash
-     ping -c 4 192.168.1.3
-     nslookup acme.lan 192.168.1.3
+     ping -c 4 192.168.1.5
+     nslookup acme.lan 192.168.1.5
      ```
    - Em um cliente Linux, teste com:
      ```bash
-     ping -c 4 192.168.1.3
-     dig @192.168.1.3 acme.lan
+     ping -c 4 192.168.1.5
+     dig @192.168.1.5 acme.lan
      ```
    - Verifique se o `ping`, `nslookup` e `dig` retornam resultados corretos.
 
@@ -208,7 +208,7 @@ A integração do Squid com o Samba permite autenticar usuários do domínio dir
 2. **Configure o domínio para autenticação**:
    - No mesmo menu, insira os seguintes valores no campo `Domain Controller`:
      - **Domain Name**: `acme.lan`.
-     - **Controller IP**: `192.168.1.3` (ou o IP do servidor Zentyal).
+     - **Controller IP**: `192.168.1.5` (ou o IP do servidor Zentyal).
 
 3. **Configure perfis de filtro**:
    - Vá para `HTTP Proxy -> Filter Profiles`.
@@ -230,7 +230,7 @@ A seguir, apresentamos um passo a passo para criar os usuários "administrador",
 ### Passo a Passo para Adicionar Grupos
 
 1. **Acesse a interface web do Zentyal:**
-   - Abra um navegador e acesse `https://192.168.1.3:8443`.
+   - Abra um navegador e acesse `https://192.168.1.5:8443`.
    - Insira as credenciais de administrador para fazer login.
 
 2. **Navegue para a seção de grupos:**
@@ -323,11 +323,11 @@ Apesar da interface gráfica do Zentyal simplificar grande parte da configuraç�
      ```
    - Altere ou adicione a seguinte configuração de autenticação:
      ```bash
-     auth_param basic program /usr/lib/squid/basic_ldap_auth -R -b "dc=acme,dc=lan" -D "cn=proxy_user,dc=acme,dc=lan" -w senha123 -f sAMAccountName=%s -h 192.168.1.3
+     auth_param basic program /usr/lib/squid/basic_ldap_auth -R -b "dc=acme,dc=lan" -D "cn=proxy_user,dc=acme,dc=lan" -w senha123 -f sAMAccountName=%s -h 192.168.1.5
      acl autenticados proxy_auth REQUIRED
      http_access allow autenticados
      ```
-     - Substitua `192.168.1.3` pelo IP do seu servidor Zentyal, se diferente.
+     - Substitua `192.168.1.5` pelo IP do seu servidor Zentyal, se diferente.
 
 4. **Recarregar o Squid:**
    - Aplique as alterações executando:
@@ -338,7 +338,7 @@ Apesar da interface gráfica do Zentyal simplificar grande parte da configuraç�
 5. **Testar a autenticação:**
    - No terminal de um cliente, teste o acesso ao proxy:
      ```bash
-     curl --proxy-user proxy_user:senha123 -x http://192.168.1.3:3128 http://www.google.com
+     curl --proxy-user proxy_user:senha123 -x http://192.168.1.5:3128 http://www.google.com
      ```
      Certifique-se de substituir o IP e porta conforme sua configuração.
 
@@ -438,7 +438,7 @@ O WPAD (Web Proxy Auto-Discovery Protocol) é um protocolo que permite que dispo
      ```plaintext
      function FindProxyForURL(url, host) {
          if (isInNet(host, "192.168.1.0", "255.255.255.0")) {
-             return "PROXY 192.168.1.3:3128";
+             return "PROXY 192.168.1.5:3128";
          } else {
              return "DIRECT";
          }
@@ -528,9 +528,9 @@ Por padrão, o acesso remoto via SSH como "root" está desabilitado por questõe
 ---
 
 ### 4. Testando o Acesso SSH
-1. Em outro computador, use um cliente SSH para testar a conexão com o IP `192.168.1.3`:
+1. Em outro computador, use um cliente SSH para testar a conexão com o IP `192.168.1.5`:
    ```bash
-   ssh root@192.168.1.3
+   ssh root@192.168.1.5
    ```
 2. Certifique-se de que a conexão é estabelecida com sucesso e que as credenciais do usuário "root" funcionam.
 
@@ -601,7 +601,7 @@ Quando o Zentyal é utilizado como gateway de rede, é essencial configurar corr
 Para liberar os serviços essenciais no firewall do Zentyal, siga os passos abaixo:
 
 1. **Acesse a interface gráfica do Zentyal:**
-   - Utilize um navegador para acessar `https://192.168.1.3:8443` e faça login com as credenciais administrativas.
+   - Utilize um navegador para acessar `https://192.168.1.5:8443` e faça login com as credenciais administrativas.
 
 2. **Navegue até as regras do firewall:**
    - Vá para `Firewall -> Packet Filter Rules`.

@@ -64,7 +64,23 @@ Durante a execução, o script perguntará se você deseja instalar o ambiente g
 
 ```
 Do you want to install the Zentyal Graphical environment? (n|y) y
+```  
+As interfaces, precisam ter um nome de 'eth0, eth1,...', mas em algumas oportunidades, elas podem ter nomes diferentes e então essa mensagem é exibida:
 ```
+  The network interface naming is not using 'eth'. You can ommit this by changing to false the variable 'OLD_NIC_NAMING' or running the following commands:
+    sed -i 's/#GRUB_HIDDEN_TIMEOUT=0/GRUB_HIDDEN_TIMEOUT=0/' /etc/default/grub
+    sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 net.ifnames=0 biosdevname=0"/' /etc/default/grub
+    update-grub
+    reboot
+```
+O que você deve fazer? Exatamente o que foi dito acima, ou seja
+```bash
+sudo sed -i 's/#GRUB_HIDDEN_TIMEOUT=0/GRUB_HIDDEN_TIMEOUT=0/' /etc/default/grub
+sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 net.ifnames=0 biosdevname=0"/' /etc/default/grub
+sudo update-grub
+sudo reboot
+```
+Após o reboot, repita este passo3 antes de prosseguir com o passo seguinte.
 
 ### 4. Acesse a interface web de administração
 

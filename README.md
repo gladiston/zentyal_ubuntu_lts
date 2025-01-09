@@ -45,6 +45,7 @@ Ao longo do artigo faça a suas adaptações para sua rede e servidor.
 ### 1. Baixe o script de instalação
 
 ```bash
+cd /tmp
 wget https://raw.githubusercontent.com/zentyal/zentyal/master/extra/ubuntu_installers/zentyal_installer_8.0.sh
 ```
 

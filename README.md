@@ -391,6 +391,7 @@ O DNS (Domain Name System) é essencial para o funcionamento de uma rede, pois t
    - Acesse `DNS -> General Settings`.
    - Certifique-se de que a opção `Enable DNS Service` está ativada.
    - No campo **Domain Name**, insira o nome de domínio interno, por exemplo, `acme.lan`.
+   - Se você desejar, poderá acrescentar "Encaminhadores" como 8.8.8.8 e 8.8.4.4 que são DNSs publicos do Google.
    - Clique em `Save`.
 
 4. **Adicione registros DNS**:

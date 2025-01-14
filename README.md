@@ -692,6 +692,15 @@ Certifique-se de repetir os passos para cada porta e serviço acima, salvando as
 Com essas configurações, o Zentyal estará pronto para operar como um gateway eficiente e seguro para sua rede.
 
 ---
+### Usando um terminal Windows para configurar meu dominio
+Se você veio de sistema anterior do Active Directory e esta acostumado a gerenciar usuários, DNS e compartilhamentos usando as ferramentas RSAT, saiba que ainda poderá fazê-lo, basta ir até um computador que usará para administrar tais serviços e ir em Configurações->Recursos opcionais e acrescente as seguintes ferramentas RSAT:
+* Ferramentas de Serviços de Arquivo  
+* Ferramentas do Servidor DNS  
+* RSAT: Ferramentas de Gerenciamento de Política de Grupo  
+* RSAT: Active Directory Domain Services e Lightweight Directory Services Tools  
+Essas ferramentas são as básicas para gerenciar um controlador de dominio a partir de uma estação Windows.
+
+---
 
 # Conclusão
 

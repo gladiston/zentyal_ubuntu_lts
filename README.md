@@ -139,6 +139,17 @@ Após o login, o assistente de configuração será iniciado. Ele permite:
    - No campo **Search Domain**, insira `acme.lan`.
    - Clique em `Save`.
 
+4. **Verificar Configuração de Atualização Dinâmica**:
+   - Navegue até DNS no painel do Zentyal.
+   - Editar as Configurações do Domínio:
+   - Localize o domínio acme.lan na seção de Domínios.
+   - Clique no ícone de edição (engrenagem) ao lado do domínio.
+   - Habilitar Atualizações Dinâmicas:
+Certifique-se de que a opção Permitir Atualizações Dinâmicas está ativada para o domínio.
+Salvar Alterações:
+
+Clique em Salvar para aplicar as mudanças.
+
 4. **Teste as configurações**:
 
    - No terminal do Zentyal, execute:
